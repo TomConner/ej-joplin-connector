@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation>
+  <qa_pair>
+    <question>List all notes in the Joplin notebook and tell me how many notes exist. What is the title of the most recently updated note?</question>
+    <answer>This requires using joplin_list_notes to retrieve notes, examining the count, and identifying the note with the most recent updated_time timestamp.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search for all notes containing the word "project" and list their titles and IDs.</question>
+    <answer>Use joplin_search_notes with query="project" to find matching notes, then extract and display their titles and IDs.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Get the complete folder hierarchy showing all notebooks and their nested structure. How many top-level folders are there?</question>
+    <answer>Use joplin_list_folders to retrieve the tree structure and count root-level folders (those without a parent_id or with null parent).</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Create a new note with the title "Test Note for MCP" and body "This is a test note created by the Joplin MCP server." What is the ID of the newly created note?</question>
+    <answer>Use joplin_create_note with title="Test Note for MCP" and body="This is a test note created by the Joplin MCP server." The response will contain the new note's ID.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>List all tags in the notebook. Create a new tag called "mcp-test" if it doesn't already exist. How many total tags are there now?</question>
+    <answer>Use joplin_list_tags to get current tags, check if "mcp-test" exists, create it with joplin_create_tag if needed, then count the total.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Create a new folder (notebook) called "MCP Testing" and then verify it appears in the folder list.</question>
+    <answer>Use joplin_create_folder with title="MCP Testing", capture its ID, then use joplin_list_folders to verify it appears in the hierarchy.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Get details about a specific note by ID. What fields are available in the note object and what information does it contain?</question>
+    <answer>Use joplin_get_note with a valid note ID to retrieve its details and inspect the response structure for all available fields.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>List all tags, then for the first tag, show all notes that have that tag. How many notes have the first tag?</question>
+    <answer>Use joplin_list_tags, extract the first tag's ID, then use joplin_get_tag_notes to retrieve notes with that tag and count them.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Get all notes in a specific folder (use any folder ID from the folder list). How many notes does that folder contain?</question>
+    <answer>Use joplin_list_folders to get folder IDs, then use joplin_get_folder_notes with one of those IDs to retrieve notes and count them.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search for notes, then take the first result, retrieve its full content using joplin_get_note, and display the complete note including title, body, and metadata.</question>
+    <answer>Use joplin_search_notes to find notes, extract the first result's ID, use joplin_get_note with response_format="json" to get full details including all metadata and content.</answer>
+  </qa_pair>
+</evaluation>
