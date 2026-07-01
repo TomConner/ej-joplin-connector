@@ -8,7 +8,8 @@ src/
 ├── types.ts          # Joplin data structures, enums (ResponseFormat, SortDirection)
 ├── constants.ts      # DEFAULT_LIMIT, CHARACTER_LIMIT, REQUEST_TIMEOUT, port range
 ├── utils.ts          # formatMarkdownNote(), truncateIfNeeded(), convertToMarkdownList()
-├── joplin-client.ts  # HTTP client: ping(), get(), post(), put(), delete()
+├── joplin-client.ts  # HTTP client: get/post/put/delete, interactive auth, port discovery
+├── token-store.ts    # Persisted token cache (loadCachedToken, saveToken, clearCachedToken)
 └── tools/
     ├── notes.ts      # Note CRUD, search, todo management
     ├── folders.ts    # Notebook/folder hierarchy
@@ -29,12 +30,15 @@ MCP client request
   → Return to client
 ```
 
-`JoplinClient` centralizes all HTTP communication, auth, port discovery, and error translation. Tool modules are purely domain logic — they never make HTTP calls directly.
+`JoplinClient` centralizes all HTTP communication, auth, port discovery, error translation, and the interactive authorization lifecycle (with cached tokens via `token-store.ts`). Tool modules are purely domain logic — they never make HTTP calls directly.
 
 ## Design Decisions
 
 ### Atomic tools over high-level workflows
 Each tool maps 1:1 to a Joplin API operation. LLMs compose them; users understand them individually. Avoid adding "convenience" multi-step tools — they obscure what's happening and complicate error handling.
+
+### Interactive authorization (no manual token copying)
+On first tool call (or after Joplin revokes/expires a token), `JoplinClient` performs Joplin's own `/auth` → poll `/auth/check` handshake, exactly like the Web Clipper extension, and caches the resulting token at `~/.config/ej-joplin-connector/token` (mode 0600). `JOPLIN_API_TOKEN` remains available as an escape hatch for headless/CI use but is never written to disk. Never log the token or include it in error messages.
 
 ### Token as query parameter
 Required by Joplin API design. Stateless. Never put tokens in headers or log them — the client strips them from error messages.
@@ -91,7 +95,7 @@ Keep these accurate. MCP clients use them for safety decisions.
 Verify Joplin is reachable:
 
 ```bash
-curl http://localhost:41184/ping?token=YOUR_TOKEN
+curl http://localhost:41184/ping
 # Expected: "JoplinClipperServer"
 ```
 
@@ -117,10 +121,12 @@ All debug logs use `console.error` (stdout is reserved for MCP stdio transport).
 
 ## Security
 
-- Tokens via environment variable only — never in code or config files
-- Tokens pass as query parameters (Joplin API requirement); acceptable for localhost
-- No SQL injection surface (REST client, not DB)
-- Zod validation covers all input boundaries
+- Tokens are obtained via Joplin's interactive authorization flow (mirroring the Web Clipper browser extension) and cached locally at `~/.config/ej-joplin-connector/token` (mode 0600), analogous to how the Web Clipper extension persists its token in browser storage.
+- `JOPLIN_API_TOKEN` remains available as an escape hatch for headless/CI use but is never written to disk.
+- Tokens pass as query parameters (Joplin API requirement); acceptable for localhost.
+- Never log the token or include it in error messages.
+- No SQL injection surface (REST client, not DB).
+- Zod validation covers all input boundaries.
 
 ## Known Limitations
 
@@ -129,6 +135,7 @@ All debug logs use `console.error` (stdout is reserved for MCP stdio transport).
 - Resource file upload not implemented
 - Encryption handled entirely by Joplin — this server does not touch encrypted content
 - Exponential backoff for rate limits is not yet implemented (rate-limit errors surface to the caller)
+- If multiple MCP client processes share the same cached token and Joplin revokes it, multiple re-auth prompts may appear (file locking not implemented; low risk since interactive auth is a rare event)
 
 ## Future Work
 

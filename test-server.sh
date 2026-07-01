@@ -9,21 +9,6 @@ echo "🧪 Joplin MCP Server Test"
 echo "=========================="
 echo ""
 
-# Check if JOPLIN_API_TOKEN is set
-if [ -z "$JOPLIN_API_TOKEN" ]; then
-    echo "❌ Error: JOPLIN_API_TOKEN environment variable not set"
-    echo ""
-    echo "To set it, run:"
-    echo "  export JOPLIN_API_TOKEN='your-token-here'"
-    echo ""
-    echo "Get your token from:"
-    echo "  Joplin > Tools > Options > Web Clipper > Advanced"
-    exit 1
-fi
-
-echo "✅ JOPLIN_API_TOKEN is set"
-echo ""
-
 # Check if server/index.js exists
 if [ ! -f "server/index.js" ]; then
     echo "❌ Error: server/index.js not found"
@@ -66,15 +51,12 @@ if [ "$EXIT_CODE" = "124" ]; then
   "mcpServers": {
     "joplin": {
       "command": "node",
-      "args": ["'"$(pwd)"'/server/index.js"],
-      "env": {
-        "JOPLIN_API_TOKEN": "your-token-here"
-      }
+      "args": ["'"$(pwd)"'/server/index.js"]
     }
   }
 }'
     echo ""
-    echo "Then restart Claude Desktop."
+    echo "Then restart Claude Desktop. On the first tool call, you'll be prompted in Joplin to grant access."
 elif [ -z "$EXIT_CODE" ] || [ "$EXIT_CODE" = "0" ]; then
     echo ""
     echo "✅ Server test passed!"
@@ -83,7 +65,7 @@ else
     echo "❌ Server failed with exit code $EXIT_CODE"
     echo ""
     echo "Troubleshooting:"
-    echo "1. Make sure Joplin is running with Web Clipper enabled"
-    echo "2. Verify your API token is correct"
+    echo "1. Make sure Joplin is running with Web Clipper enabled (Tools > Options > Web Clipper)"
+    echo "2. If prompted, approve the authorization request in Joplin"
     echo "3. Check that port 41184-41194 is accessible"
 fi

@@ -8,17 +8,10 @@ import { registerFolderTools } from "./tools/folders.js";
 import { registerTagTools } from "./tools/tags.js";
 
 async function main(): Promise<void> {
-  const token = process.env.JOPLIN_API_TOKEN;
-  if (!token) {
-    process.stderr.write(
-      "ERROR: JOPLIN_API_TOKEN is not set.\n" +
-      "Get your token from: Joplin > Tools > Options > Web Clipper > Advanced\n"
-    );
-    process.exit(1);
-  }
-
   // JoplinClient connects lazily on the first tool call — server starts even if Joplin is not yet open.
-  const client = new JoplinClient(token);
+  // JOPLIN_API_TOKEN is an optional override for headless/CI use; otherwise the client authenticates
+  // interactively against Joplin on first use (same flow as the Web Clipper browser extension).
+  const client = new JoplinClient(process.env.JOPLIN_API_TOKEN);
 
   const server = new McpServer({ name: "joplin-mcp-server", version: "1.0.0" });
 

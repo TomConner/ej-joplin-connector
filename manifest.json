@@ -4,7 +4,7 @@
   "display_name": "Joplin MCP Server",
   "version": "1.0.0",
   "description": "Interact with your Joplin notebook from Claude — manage notes, folders, tags, and search.",
-  "long_description": "A local MCP server that connects Claude to your Joplin notebook via the Joplin Data API. Requires Joplin (desktop app) to be running with Web Clipper enabled.\n\nFeatures:\n- **Notes**: list, search, create, update, delete\n- **Folders**: browse hierarchy, create, delete\n- **Tags**: list, apply, remove, delete\n- **Search**: full-text search across all notes\n\nThe server auto-discovers the Joplin port (41184–41194) and connects lazily on the first tool call, so it starts cleanly even if Joplin is not yet open.",
+  "long_description": "A local MCP server that connects Claude to your Joplin notebook via the Joplin Data API. Requires Joplin (desktop app) to be running with Web Clipper enabled.\n\nFeatures:\n- **Notes**: list, search, create, update, delete\n- **Folders**: browse hierarchy, create, delete\n- **Tags**: list, apply, remove, delete\n- **Search**: full-text search across all notes\n\nThe server auto-discovers the Joplin port (41184–41194) and authenticates automatically — on first use, Joplin shows a permission prompt, just click \"Grant authorization\" to connect. No manual token copying required. The server connects lazily on the first tool call, so it starts cleanly even if Joplin is not yet open.",
   "author": {
     "name": "Tom Conner",
     "email": "tomconner46@gmail.com"
@@ -20,10 +20,7 @@
     "entry_point": "server/index.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/server/index.js"],
-      "env": {
-        "JOPLIN_API_TOKEN": "${user_config.api_token}"
-      }
+      "args": ["${__dirname}/server/index.js"]
     }
   },
   "tools": [
@@ -46,15 +43,6 @@
     { "name": "joplin_remove_tag_from_note", "description": "Remove a tag from a note" },
     { "name": "joplin_delete_tag", "description": "Delete a tag" }
   ],
-  "user_config": {
-    "api_token": {
-      "type": "string",
-      "title": "Joplin API Token",
-      "description": "Your Joplin API token. Open Joplin → Tools → Options → Web Clipper → Advanced to find it.",
-      "sensitive": true,
-      "required": true
-    }
-  },
   "compatibility": {
     "claude_desktop": ">=0.10.0",
     "platforms": ["darwin", "win32", "linux"],
