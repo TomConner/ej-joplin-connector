@@ -1,0 +1,65 @@
+{
+  "manifest_version": "0.3",
+  "name": "joplin-mcp",
+  "display_name": "Joplin MCP Server",
+  "version": "1.0.0",
+  "description": "Interact with your Joplin notebook from Claude — manage notes, folders, tags, and search.",
+  "long_description": "A local MCP server that connects Claude to your Joplin notebook via the Joplin Data API. Requires Joplin (desktop app) to be running with Web Clipper enabled.\n\nFeatures:\n- **Notes**: list, search, create, update, delete\n- **Folders**: browse hierarchy, create, delete\n- **Tags**: list, apply, remove, delete\n- **Search**: full-text search across all notes\n\nThe server auto-discovers the Joplin port (41184–41194) and connects lazily on the first tool call, so it starts cleanly even if Joplin is not yet open.",
+  "author": {
+    "name": "Tom Conner",
+    "email": "tomconner46@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomConner/ej-joplin-connector.git"
+  },
+  "license": "MIT",
+  "keywords": ["joplin", "notes", "notebook", "productivity", "markdown", "todo"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "JOPLIN_API_TOKEN": "${user_config.api_token}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "joplin_list_notes", "description": "List notes with pagination and sorting" },
+    { "name": "joplin_get_note", "description": "Get a specific note by ID with full content" },
+    { "name": "joplin_create_note", "description": "Create a new note or todo" },
+    { "name": "joplin_update_note", "description": "Update title, body, or todo status of a note" },
+    { "name": "joplin_delete_note", "description": "Delete a note (to trash or permanently)" },
+    { "name": "joplin_search_notes", "description": "Full-text search across all notes" },
+    { "name": "joplin_list_folders", "description": "List all notebooks as a hierarchy tree" },
+    { "name": "joplin_get_folder", "description": "Get details of a specific folder" },
+    { "name": "joplin_get_folder_notes", "description": "List all notes inside a folder" },
+    { "name": "joplin_create_folder", "description": "Create a new notebook folder" },
+    { "name": "joplin_delete_folder", "description": "Delete a folder (to trash or permanently)" },
+    { "name": "joplin_list_tags", "description": "List all tags" },
+    { "name": "joplin_get_tag", "description": "Get details of a specific tag" },
+    { "name": "joplin_get_tag_notes", "description": "List all notes with a specific tag" },
+    { "name": "joplin_create_tag", "description": "Create a new tag" },
+    { "name": "joplin_add_tag_to_note", "description": "Apply a tag to a note" },
+    { "name": "joplin_remove_tag_from_note", "description": "Remove a tag from a note" },
+    { "name": "joplin_delete_tag", "description": "Delete a tag" }
+  ],
+  "user_config": {
+    "api_token": {
+      "type": "string",
+      "title": "Joplin API Token",
+      "description": "Your Joplin API token. Open Joplin → Tools → Options → Web Clipper → Advanced to find it.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

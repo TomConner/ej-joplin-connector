@@ -1,15 +1,16 @@
 {
-  "name": "joplin-mcp-server",
+  "name": "joplin-mcp",
   "version": "1.0.0",
   "description": "MCP server for Joplin Data API integration",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "server/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node server/index.js",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "clean": "rm -rf dist",
-    "test": "node dist/index.js"
+    "clean": "rm -rf server dist",
+    "pack": "npm run build && npm install --omit=dev --ignore-scripts && mcpb pack",
+    "test": "node server/index.js"
   },
   "engines": {
     "node": ">=18"

@@ -1,0 +1,33 @@
+# TypeScript source (compiled output is in server/)
+src/
+tsconfig.json
+*.tsbuildinfo
+
+# Old build output
+dist/
+
+# Development scripts and docs
+test-server.sh
+mcp-json.sh
+DEVELOPMENT.md
+evaluations.xml
+
+# Version control
+.git/
+.gitignore
+.mcpbignore
+
+# Source maps and type declarations (reduce bundle size)
+server/**/*.map
+server/**/*.d.ts
+server/**/*.d.ts.map
+
+# Secrets / local config
+.mcp.json
+.env
+.env.*
+.codex/
+
+# Dev dependencies are not included (use npm install --omit=dev before packing)
+node_modules/.cache/
+
