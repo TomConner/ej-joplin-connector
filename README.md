@@ -59,7 +59,21 @@ Verify it's registered with `claude mcp list`. On the first tool call, you'll be
 
 ## Adding to Codex
 
-Codex reads MCP servers from `~/.codex/config.toml`. After building (`npm install && npm run build`), add a server entry like this:
+Codex reads MCP servers from `~/.codex/config.toml`. From the project root, the easiest way to set everything up is:
+
+```bash
+npm run codex:install
+```
+
+That runs the build plus both setup steps:
+
+```bash
+npm run build
+npm run codex:setup
+npm run codex:skills:install
+```
+
+If you want to configure only the MCP server entry, `npm run codex:setup` writes the Codex config like this:
 
 ```toml
 [mcp_servers.joplin]
@@ -80,27 +94,13 @@ startup_timeout_sec = 120
 
 Restart Codex after saving the config. On the first tool call, Joplin will prompt you to grant authorization.
 
-You can also let the repo write the entry for you from the project root:
-
-```bash
-npx joplin-mcp-codex-setup
-```
+If you want only the Joplin skill installed into Codex, run `npm run codex:skills:install`.
 
 ## Adding the Joplin Skill to Codex
 
 Codex skills live in `~/.codex/skills`. This repo includes a small skill package that tells Codex to prefer the Joplin MCP server when a task touches Joplin data.
 
-Install it from the repo root:
-
-```bash
-npm run codex:skill:install
-```
-
-Or:
-
-```bash
-npx joplin-mcp-install-skill
-```
+Install it from the repo root with `npm run codex:skills:install`.
 
 This copies `skills/joplin-mcp` into Codex's skills directory. You still need the MCP server registered in `~/.codex/config.toml`.
 

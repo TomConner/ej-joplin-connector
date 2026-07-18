@@ -4,15 +4,14 @@
   "description": "MCP server for Joplin Data API integration",
   "type": "module",
   "main": "server/index.js",
-  "bin": {
-    "joplin-mcp-codex-setup": "./scripts/codex-setup.js",
-    "joplin-mcp-install-skill": "./scripts/install-codex-skill.js"
-  },
   "scripts": {
     "start": "node server/index.js",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "codex:skill:install": "node scripts/install-codex-skill.js",
+    "codex:setup": "node scripts/codex-setup.js",
+    "codex:skills:install": "node scripts/install-codex-skill.js",
+    "codex:skill:install": "npm run codex:skills:install",
+    "codex:install": "npm run build && npm run codex:setup && npm run codex:skills:install",
     "clean": "rm -rf server dist",
     "pack": "npm run build && npm install --omit=dev --ignore-scripts && mcpb pack",
     "test": "node server/index.js"
